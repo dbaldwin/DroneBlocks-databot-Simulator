@@ -41,7 +41,6 @@ class Bluetooth {
 
   disconnect () {
     this.mainServer.disconnect()
-    // Not sure what to do here
   }
 
   sendConfig () {
@@ -50,7 +49,7 @@ class Bluetooth {
     return this.writeCharacteristic.writeValue(encodedConfig)
   }
 
-  sendStartCommand() {
+  sendStartCommand () {
     const encodedString = new TextEncoder().encode('1')
     return this.writeCharacteristic.writeValue(encodedString)
   }
