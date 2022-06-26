@@ -13,15 +13,11 @@ $(function () {
     conn.disconnect()
   })
 
-  $('#sendConfig').on('click', function () {
-    conn.sendConfig().then(_ => {
-      console.log('config sent')
-    })
+  $('#send-config').on('click', function () {
+    conn.sendConfig()
   })
 
   $('#start-reading').on('click', function () {
-    conn.sendStartCommand().then(_ => {
-      console.log('start command sent')
-    })
+    conn.sendStartCommand()
   })
 })
