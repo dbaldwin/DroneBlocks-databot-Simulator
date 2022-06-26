@@ -1,0 +1,3 @@
+const config = '{"refresh":500,"decimal":2,"timeFactor":1000,"timeDec":2,"accl":false,"Laccl":false,"gyro":true,"magneto":false,"IMUtemp":false,"Etemp1":false,"Etemp2":false,"pressure":false,"alti":false,"ambLight":false,"rgbLight":false,"UV":false,"co2":false,"voc":false,"hum":false,"humTemp":false,"Sdist":false,"Ldist":false,"noise":false,"gesture":false,"sysCheck":false,"usbCheck":false,"altCalib":false,"humCalib":false,"DtmpCal":false,"led1":{"state":true,"R":255,"Y":0,"B":0},"led2":{"state":true,"R":0,"Y":255,"B":0},"led3":{"state":true,"R":0,"Y":0,"B":255}}'
+const bytes = new TextEncoder().encode(config)
+console.log(bytes)
