@@ -9,7 +9,8 @@ class Bluetooth {
     this.mainServer
     this.writeCharacteristic
     this.readCharacteristic
-    this.config = '{"refresh":500,"decimal":2,"timeFactor":1000,"timeDec":2,"accl":false,"Laccl":false,"gyro":true,"magneto":false,"IMUtemp":false,"Etemp1":false,"Etemp2":false,"pressure":false,"alti":false,"ambLight":false,"rgbLight":false,"UV":false,"co2":false,"voc":false,"hum":false,"humTemp":false,"Sdist":false,"Ldist":false,"noise":false,"gesture":false,"sysCheck":false,"usbCheck":false,"altCalib":false,"humCalib":false,"DtmpCal":false,"led1":{"state":true,"R":255,"Y":0,"B":0},"led2":{"state":true,"R":0,"Y":255,"B":0},"led3":{"state":true,"R":0,"Y":0,"B":255}}'
+    this.config = '{"refresh":500,"decimal":2,"timeFactor":1000,"timeDec":2,"accl":true,"led1":{"state":true,"R":26,"Y":117,"B":118},"led2":{"state":true,"R":0,"Y":255,"B":0},"led3":{"state":true,"R":0,"Y":0,"B":255}}'
+    // this.config = '{"refresh":500,"decimal":2,"timeFactor":1000,"timeDec":2,"accl":false,"Laccl":false,"gyro":true,"magneto":false,"IMUtemp":false,"Etemp1":false,"Etemp2":false,"pressure":false,"alti":false,"ambLight":false,"rgbLight":false,"UV":false,"co2":false,"voc":false,"hum":false,"humTemp":false,"Sdist":false,"Ldist":false,"noise":false,"gesture":false,"sysCheck":false,"usbCheck":false,"altCalib":false,"humCalib":false,"DtmpCal":false,"led1":{"state":true,"R":255,"Y":0,"B":0},"led2":{"state":true,"R":0,"Y":255,"B":0},"led3":{"state":true,"R":0,"Y":0,"B":255}}'
   }
 
   async connect () {
@@ -18,6 +19,9 @@ class Bluetooth {
 
       console.log('Requesting bluetooth device')
       const device = await navigator.bluetooth.requestDevice(options)
+
+      // Listen for disconnect event
+      device.addEventListener('gattserverdisconnected', this.disconnectHandler)
 
       console.log('Connecting to GATT server')
       const server = await device.gatt.connect()
@@ -33,13 +37,17 @@ class Bluetooth {
       console.log('Getting read characteristic')
       const readCharacteristic = await service.getCharacteristic(this.readUUID)
       this.readCharacteristic = readCharacteristic
+
+      await readCharacteristic.startNotifications()
+
+      readCharacteristic.addEventListener('characteristicvaluechanged', this.handleNotifications)
     } catch (error) {
       console.log(`Error: ${error}`)
     }
   }
 
   disconnectHandler () {
-    console.log('disconnected')
+    console.log('disconnectedHandler called')
   }
 
   disconnect () {
@@ -47,10 +55,27 @@ class Bluetooth {
   }
 
   async sendConfig () {
+    await this.writeCharacteristic.writeValue(new TextEncoder().encode(this.config))
+  }
+
+  async sendStartCommand () {
     try {
-      // const encodedConfig = new TextEncoder().encode(this.config)
-      // await this.writeStrToCharacteristic(encodedConfig)
-      // console.log('Done sending config')
+      const encodedString = new TextEncoder().encode('1')
+      console.log('Sending start command')
+      await this.writeCharacteristic.writeValue(encodedString)
+      console.log('Done sending start command')
+    } catch (error) {
+      console.log(`Error: ${error}`)
+    }
+  }
+
+  handleNotifications (event) {
+    const value = event.target.value
+    console.log(value)
+  }
+
+  async sendConfigInChunks () {
+    try {
       const zpl = this.config
 
       const maxChunk = 256
@@ -68,17 +93,6 @@ class Bluetooth {
           j++
         }
       }
-    } catch (error) {
-      console.log(`Error: ${error}`)
-    }
-  }
-
-  async sendStartCommand () {
-    try {
-      const encodedString = new TextEncoder().encode('1')
-      console.log('Sending start command')
-      await this.writeCharacteristic.writeValue(encodedString)
-      console.log('Done sending start command')
     } catch (error) {
       console.log(`Error: ${error}`)
     }
