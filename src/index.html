@@ -4,12 +4,87 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Databot Bluetooth</title>
+    <title>DroneBlocks Simulator with databot</title>
+    <script>
+        let currentCommandUUID = "";
+        function highlightBlockFromUnity(uuid) {
+            return
+            /*
+             * Unity will send a valid uuid for the start of the command
+             * and when the command is complete it will send an empty uuid
+             * After this sequence is when we want to send a response
+             * for the next command to execute
+             */
+
+            console.log("highlightBlockFromUnity Called: " + uuid);
+
+            // We have a valid uuid of the command currently being executed
+            if (uuid.length > 0) {
+                currentCommandUUID = uuid;
+            }
+
+            // The current command is done executing so let's send the uuid via MQTT
+            if (currentCommandUUID.length > 0 && uuid.length == 0) {
+                window.sendResponse(currentCommandUUID);
+            }
+        }
+    </script>
 </head>
 <body>
+    <!-- Trigger/Open The Modal -->
     <button id="connect">Connect</button>
     <button id="disconnect">Disconnect</button>
-    <button id="send-config">Send Config</button>
-    <button id="start-reading">Start Reading</button>
+    <button id="start-reading">Start Experiment</button>
+    <span>Value: <span id="lightValue">0</span></span>
+
+    <div id="unity-container">
+        <canvas id="unity-canvas"></canvas>
+        <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+            <div id="unity-progress-bar-full"></div>
+            <div id="unity-progress-bar-label">0%</div>
+        </div>
+        </div>
+    </div>
+
+    <script>
+        let buildUrl = "simulator_v2/minimal";
+        let loaderUrl = buildUrl + "/simulator_v2.loader.js";
+        let config = {
+            dataUrl: buildUrl + "/simulator_v2.data.unityweb",
+            frameworkUrl: buildUrl + "/simulator_v2.framework.js.unityweb",
+            codeUrl: buildUrl + "/simulator_v2.wasm.unityweb",
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "DroneBlocks",
+            productName: "DroneBlocks-Simulator-Unity",
+            productVersion: "0.1",
+        };
+
+        let container = document.querySelector("#unity-container");
+        let canvas = document.querySelector("#unity-canvas");
+        let loadingBar = document.querySelector("#unity-loading-bar");
+        let progressBarFull = document.querySelector("#unity-progress-bar-full");
+        let progressBarLabel = document.querySelector("#unity-progress-bar-label");
+        canvas.style.width = "100%";
+        canvas.style.height = "100%";
+        loadingBar.style.display = "block";
+
+        let script = document.createElement("script");
+        script.src = loaderUrl;
+        script.onload = () => {
+            createUnityInstance(canvas, config, (progress) => {
+            progressBarFull.style.width = 100 * progress + "%";
+            let progressPercentage = progress.toFixed(2) * 100;
+            progressBarLabel.textContent = progressPercentage + "%";
+            }).then((unityInstance) => {
+            window.unityInstance = unityInstance;
+                loadingBar.style.display = "none";            
+            }).catch((message) => {
+            alert(message);
+            });
+        };
+        document.body.appendChild(script);
+    </script>
 </body>
 </html>
