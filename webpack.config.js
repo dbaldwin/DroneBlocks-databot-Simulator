@@ -1,5 +1,4 @@
 const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
@@ -7,10 +6,13 @@ module.exports = {
 
   mode: 'development',
 
-  entry: './src/js/index.js',
+  entry: {
+    index: './src/js/index.js',
+    blockly: './src/js/blockly.js'
+  },
 
   output: {
-    filename: 'bundle.js',
+    filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
     clean: true
   },
@@ -21,16 +23,27 @@ module.exports = {
   },
 
   plugins: [
-    new HtmlWebpackPlugin({
-      hash: true,
-      template: 'src/index.html',
-      filename: './index.html'
-    }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: path.resolve(__dirname, 'src/simulator_v2'), to: path.resolve(__dirname, 'dist/simulator_v2') }
+        {
+          from: path.resolve(__dirname, './node_modules/blockly/media'),
+          to: path.resolve(__dirname, 'dist/media')
+        },
+        {
+          from: path.resolve(__dirname, 'public'),
+          to: path.resolve(__dirname, 'dist')
+        }
       ]
     })
-  ]
+  ],
+
+  module: {
+    rules: [
+      {
+        test: /\.html$/i,
+        loader: 'html-loader'
+      }
+    ]
+  }
 
 }

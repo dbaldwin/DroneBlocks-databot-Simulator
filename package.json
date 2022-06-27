@@ -5,12 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
     "start": "webpack && webpack-dev-server"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "blockly": "^8.0.3",
     "jquery": "^3.6.0",
     "webpack": "^5.73.0"
   },
@@ -21,7 +23,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.2.3",
     "eslint-plugin-promise": "^6.0.0",
-    "html-webpack-plugin": "^5.5.0",
+    "html-loader": "^3.1.2",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.9.2"
   }
