@@ -3,7 +3,7 @@ const Bluetooth = require('./bluetooth')
 const Drone = require('./drone')
 
 let conn
-let drone = new Drone()
+const drone = new Drone()
 
 $(function () {
   $('#connect').on('click', function () {
