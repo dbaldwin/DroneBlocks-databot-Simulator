@@ -60,10 +60,8 @@ class Bluetooth {
 
   async sendStartCommand () {
     try {
-      const encodedString = new TextEncoder().encode('1')
-      console.log('Sending start command')
+      const encodedString = new TextEncoder().encode('1.0')
       await this.writeCharacteristic.writeValue(encodedString)
-      console.log('Done sending start command')
     } catch (error) {
       console.log(`Error: ${error}`)
     }
@@ -71,42 +69,7 @@ class Bluetooth {
 
   handleNotifications (event) {
     const value = event.target.value
-    console.log(value)
-  }
-
-  async sendConfigInChunks () {
-    try {
-      const zpl = this.config
-
-      const maxChunk = 256
-      let j = 0
-
-      if (zpl.length > maxChunk) {
-        for (let i = 0; i < zpl.length; i += maxChunk) {
-          let subStr
-          if (i + maxChunk <= zpl.length) {
-            subStr = zpl.substring(i, i + maxChunk)
-          } else {
-            subStr = zpl.substring(i, zpl.length)
-          }
-          setTimeout(this.writeStrToCharacteristic.bind(this), 250 * j, subStr)
-          j++
-        }
-      }
-    } catch (error) {
-      console.log(`Error: ${error}`)
-    }
-  }
-
-  writeStrToCharacteristic (str) {
-    console.log(str)
-    const buffer = new ArrayBuffer(str.length)
-    const dataView = new DataView(buffer)
-    for (let i = 0; i < str.length; i++) {
-      dataView.setUint8(i, str.charAt(i).charCodeAt())
-    }
-    console.log(buffer)
-    this.writeCharacteristic.writeValue(buffer)
+    console.log(new TextDecoder().decode(value))
   }
 }
 
