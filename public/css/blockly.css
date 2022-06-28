@@ -5,9 +5,18 @@ body {
 }
 
 #blocklyDiv {
-    height: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    float: left;
+    width: 75%;
 }
 
-#blocklyButton {
-    float: right;
+.blocklyTreeRow {
+    height: 35px;
+    line-height: 30px;
+}
+
+.blocklyTreeSeparator {
+    border-bottom: solid #06b0f3 1px;
 }

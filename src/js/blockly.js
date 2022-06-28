@@ -15,11 +15,6 @@ $(function () {
   }
 
   const workspace = Blockly.inject('blocklyDiv', {
-    toolbox: document.getElementById('toolbox'),
-    media: 'media/'
-  })
-
-  workspace = Blockly.inject('blocklyDiv', {
     theme: DroneBlocksTheme,
     toolbox: document.getElementById('toolbox'),
     media: 'media/',
@@ -28,14 +23,14 @@ $(function () {
       length: 1,
       colour: '#888',
       snap: false
-	  },
+    },
     zoom: {
       controls: true,
       startScale: 1,
       maxScale: 3,
       minScale: 0.3,
       scaleSpeed: 1.2
-	  }
+    }
   })
 
   // Init our custom blocks for the toolbox
